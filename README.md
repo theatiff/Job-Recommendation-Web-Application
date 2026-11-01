@@ -1,648 +1,225 @@
-# AI-Powered Job Recommendation & Application Portal
+AI-Powered Job Recommendation & Application Portal
 
-> A modern full-stack web application leveraging Machine Learning to provide intelligent job recommendations. Built with React, Node.js, MongoDB, and Python ML API.
+A full-stack job portal that helps candidates discover relevant job
+opportunities and manage applications. Recruiters can publish jobs and
+review applications, while administrators can manage users and job
+listings.
 
----
+The project combines a React frontend, a Node.js/Express backend,
+MongoDB, and a Python-based recommendation service.
 
-## Table of Contents
+Features
 
-- [Project Overview](#project-overview)
-- [Features](#features)
-- [Technology Stack](#technology-stack)
-- [Architecture](#architecture)
-- [Database Schema](#database-schema)
-- [Folder Structure](#folder-structure)
-- [API Documentation](#api-documentation)
-- [Setup & Installation](#setup--installation)
-- [AI Model Workflow](#ai-model-workflow)
-- [Testing Strategy](#testing-strategy)
-- [Deployment Guide](#deployment-guide)
-- [Future Enhancements](#future-enhancements)
-- [Contributors](#contributors)
+Candidate
 
----
+Create an account and manage a profile.
 
-## Project Overview
+Search and browse job listings.
 
-This full-stack application connects job seekers with relevant opportunities using AI-powered recommendations. The platform supports three user roles (Candidates, Recruiters, Admins) with dedicated dashboards, secure JWT authentication with refresh tokens, real-time notifications, and comprehensive analytics.
+Upload a resume.
 
-**Key Highlights:**
-- AI-driven job matching based on skills and experience
-- Real-time application tracking
-- Secure authentication with automatic token refresh
-- Role-based access control
-- Admin analytics dashboard
-- Cloud-based file storage (Cloudinary)
+Receive job recommendations based on profile skills and job
+requirements.
 
----
+Apply for jobs and track application status.
 
-## Features
+Recruiter
 
-### For Candidates
-- User registration with profile image upload
-- Secure login with JWT authentication
-- Complete profile management (skills, experience, education)
-- Resume upload (PDF)
-- AI-powered job recommendations
-- Advanced job search with filters
-- Apply for jobs with cover letters
-- Track application status (pending, shortlisted, accepted, rejected)
+Create and manage job listings.
 
-### For Recruiters
-- Post new job listings
-- Edit and manage job postings
-- View candidate applications
-- Recruiter dashboard with statistics
-- Update application status
+View applications submitted for posted jobs.
 
-### For Admins
-- System-wide analytics dashboard
-- User management (view all users, change roles, delete users)
-- Job approval/rejection workflow
-- View pending jobs
-- System oversight and moderation
+Update application statuses.
 
-### Security Features
-- JWT-based authentication
-- HTTP-only refresh tokens
-- Automatic token refresh (no repeated logins)
-- Password reset via email OTP
-- Bcrypt password hashing
-- Protected routes with role-based permissions
+Administrator
 
----
+View platform information and analytics.
 
-## Technology Stack
+Manage users.
 
-### Frontend
-- **React 18** - Modern UI library
-- **Redux Toolkit** - State management
-- **React Router v6** - Client-side routing
-- **Axios** - HTTP client with interceptors
-- **Tailwind CSS** - Utility-first styling
-- **Lucide React** - Icon library
-- **Vite** - Build tool and dev server
+Review job listings.
 
-### Backend
-- **Node.js** - JavaScript runtime
-- **Express.js** - Web framework
-- **MongoDB** - NoSQL database
-- **Mongoose** - MongoDB ODM
-- **JWT** - JSON Web Tokens for auth
-- **Bcrypt** - Password hashing
-- **Cloudinary** - Cloud file storage
-- **Nodemailer** - Email service
-- **Multer** - File upload middleware
+Authentication and files
 
-### AI/ML
-- **Python** - ML backend language
-- **Flask/FastAPI** - Python web framework
-- **scikit-learn** - ML library (TF-IDF, Cosine Similarity)
-- **NLTK/spaCy** - Natural Language Processing
-- **pandas** - Data manipulation
+JWT-based authentication.
 
-### DevOps
-- **Docker** - Containerization (optional)
-- **GitHub Actions** - CI/CD pipeline
-- **Vercel/Netlify** - Frontend hosting
-- **Render/Railway** - Backend hosting
+Password hashing.
 
----
+Password reset support.
 
-## Architecture
+File uploads using Cloudinary.
 
-```
-┌─────────────────┐                 ┌──────────────────┐
-│                 │   REST API      │                  │
-│   Frontend      │ ◄──────────────►│   Backend        │
-│   (React +      │   WebSocket     │   (Node.js +     │
-│   Redux)        │                 │   Express)       │
-│                 │                 │                  │
-└─────────────────┘                 └──────────────────┘
-        │                                     │
-        │                                     │
-        │                                     ▼
-        │                            ┌──────────────────┐
-        │                            │                  │
-        │                            │   MongoDB        │
-        │                            │   Database       │
-        │                            │                  │
-        │                            └──────────────────┘
-        │
-        │   REST API
-        │   (Job Recommendations)
-        ▼
-┌─────────────────┐
-│                 │
-│   ML API        │
-│   (Flask/       │
-│   FastAPI)      │
-│                 │
-└─────────────────┘
-```
+Technology
 
----
+Area                                Technologies
 
-## Database Schema
+Frontend                            React, Vite, Redux Toolkit, React
+Router, Axios, Tailwind CSS
 
-### Collections
+Backend                             Node.js, Express.js, Mongoose
 
-#### Users
-```javascript
-{
-  _id: ObjectId,
-  name: String (required),
-  email: String (required, unique),
-  username: String (required, unique),
-  password: String (required, hashed),
-  role: String (enum: ['condidate', 'recruiter', 'admin']),
-  skills: [String],
-  experience: Number,
-  location: String,
-  education: String,
-  resume: { url: String, public_id: String },
-  profileImage: { url: String, public_id: String },
-  refreshToken: String,
-  forgotPasswordToken: String,
-  forgotPasswordExpiry: Date,
-  createdAt: Date,
-  updatedAt: Date
-}
-```
+Database                            MongoDB
 
-#### Jobs
-```javascript
-{
-  _id: ObjectId,
-  title: String (required),
-  description: String (required),
-  skillsRequired: [String],
-  location: String,
-  salary: { min: Number, max: Number },
-  jobType: String (enum: ['Full-time', 'Part-time', 'Contract', 'Internship']),
-  experienceRequired: Number,
-  companyName: String,
-  recruiterId: ObjectId (ref: 'User'),
-  status: String (enum: ['active', 'pending', 'closed']),
-  createdAt: Date,
-  updatedAt: Date
-}
-```
+Recommendation service              Python, scikit-learn
 
-#### Applications
-```javascript
-{
-  _id: ObjectId,
-  userId: ObjectId (ref: 'User'),
-  jobId: ObjectId (ref: 'Job'),
-  status: String (enum: ['pending', 'shortlisted', 'accepted', 'rejected']),
-  coverLetter: String,
-  appliedOn: Date,
-  reviewedOn: Date,
-  createdAt: Date,
-  updatedAt: Date
-}
-```
+File storage                        Cloudinary
 
-### ER Diagram
-```
-┌──────────┐           ┌──────────────┐           ┌─────────┐
-│   User   │ 1       * │ Application  │ *       1 │   Job   │
-│          ├───────────┤              ├───────────┤         │
-│  _id     │           │  userId      │           │  _id    │
-│  name    │           │  jobId       │           │  title  │
-│  email   │           │  status      │           │ recruiter│
-│  role    │           │  coverLetter │           │         │
-└──────────┘           └──────────────┘           └─────────┘
-```
+Authentication                      JWT, bcrypt
 
----
+How the application works
 
-## Folder Structure
+A candidate creates a profile and adds their skills and experience.
 
-```
-project-root/
-│
+Recruiters publish job listings with role details and required
+skills.
+
+The recommendation service compares candidate information with job
+requirements.
+
+Relevant jobs are returned to the candidate.
+
+Candidates can apply and follow the status of their applications.
+
+The recommendation workflow uses text processing, TF-IDF vectorization,
+and cosine similarity, as described in the project design.
+
+Project structure
+
+AI-Powered-Job-Recommendation-Application-Portal/
 ├── backend/
-│   ├── controllers/         # Request handlers
-│   │   ├── auth.controller.js
-│   │   ├── user.controller.js
-│   │   ├── job.controller.js
-│   │   ├── application.controller.js
-│   │   ├── admin.controller.js
-│   │   └── recommendation.controller.js
-│   ├── models/              # Mongoose schemas
-│   │   ├── user.model.js
-│   │   ├── job.model.js
-│   │   └── application.model.js
-│   ├── routes/              # API routes
-│   │   ├── auth.routes.js
-│   │   ├── user.routes.js
-│   │   ├── job.routes.js
-│   │   ├── application.routes.js
-│   │   ├── admin.routes.js
-│   │   └── recommendation.routes.js
-│   ├── middlewares/         # Custom middleware
-│   │   ├── auth.middleware.js
-│   │   ├── multer.middleware.js
-│   │   └── error.middleware.js
-│   ├── utils/               # Utility functions
-│   │   ├── ApiError.js
-│   │   ├── ApiResponse.js
-│   │   ├── asyncHandler.js
-│   │   └── cloudinary.js
-│   ├── validators/          # Input validation
-│   ├── database/            # Database seeds
-│   │   ├── seed/
-│   │   │   ├── users.seed.js
-│   │   │   ├── jobs.seed.js
-│   │   │   └── applications.seed.js
-│   │   ├── index.js
-│   │   └── README.md
-│   ├── constants.js
-│   ├── server.js
+│   ├── src/
+│   │   ├── config/
+│   │   ├── controllers/
+│   │   ├── middlewares/
+│   │   ├── models/
+│   │   ├── routes/
+│   │   ├── services/
+│   │   ├── utils/
+│   │   └── validators/
 │   ├── package.json
-│   └── .env
-│
-├── frontend/
+│   └── vercel.json
+├── client/
 │   ├── src/
 │   │   ├── api/
-│   │   │   └── axios.js        # Axios config with interceptors
 │   │   ├── components/
-│   │   │   ├── common/
-│   │   │   └── layout/
 │   │   ├── pages/
-│   │   │   ├── Home.jsx
-│   │   │   ├── Login.jsx
-│   │   │   ├── Register.jsx
-│   │   │   ├── Dashboard.jsx
-│   │   │   ├── Jobs.jsx
-│   │   │   ├── JobDetails.jsx
-│   │   │   ├── UserProfile.jsx
-│   │   │   ├── Settings.jsx
-│   │   │   ├── ForgotPassword.jsx
-│   │   │   ├── ResetPassword.jsx
-│   │   │   ├── RecruiterDashboard.jsx
-│   │   │   └── AdminDashboard.jsx
-│   │   ├── store/
-│   │   │   ├── slices/
-│   │   │   │   ├── authSlice.js
-│   │   │   │   ├── jobsSlice.js
-│   │   │   │   ├── applicationsSlice.js
-│   │   │   │   ├── userSlice.js
-│   │   │   │   └── adminSlice.js
-│   │   │   ├── hooks.js
-│   │   │   └── index.js
-│   │   ├── App.jsx
-│   │   └── main.jsx
+│   │   └── store/
 │   ├── package.json
-│   ├── vite.config.js
-│   └── .env
-│
+│   └── vite.config.js
+├── database/
+│   ├── seed/
+│   └── index.js
 ├── ml_api/
-│   ├── app.py                  # Flask/FastAPI app
-│   ├── model.py                # ML model logic
-│   ├── requirements.txt
-│   └── .env
-│
-├── docs/
-│   ├── API_DOCUMENTATION.md
-│   ├── ARCHITECTURE_DIAGRAM.png
-│   ├── ER_DIAGRAM.png
-│   ├── JobPortal.postman_collection.json
-│   └── swagger.yaml
-│
-├── .gitignore
-├── README.md
-└── docker-compose.yml (optional)
-```
+│   ├── routes/
+│   ├── utils/
+│   ├── main.py
+│   └── requirements.txt
+└── README.md
 
----
+Getting started
 
-## API Documentation
+Requirements
 
-### Authentication Routes (`/api/auth`)
+Install the following before running the project:
 
-| Method | Endpoint              | Description                | Auth Required |
-|--------|-----------------------|----------------------------|---------------|
-| POST   | `/register`           | Register new user          | No            |
-| POST   | `/login`              | Login user                 | No            |
-| POST   | `/logout`             | Logout user                | Yes           |
-| POST   | `/refresh-token`      | Refresh access token       | No (Cookie)   |
-| POST   | `/forgot-password`    | Request password reset     | No            |
-| POST   | `/reset-password`     | Reset password with OTP    | No            |
+Node.js and npm
 
-### User Routes (`/api/users`)
+Python
 
-| Method | Endpoint              | Description                | Auth Required | Role          |
-|--------|-----------------------|----------------------------|---------------|---------------|
-| GET    | `/profile`            | Get user profile           | Yes           | All           |
-| PUT    | `/profile`            | Update profile             | Yes           | Candidate     |
-| POST   | `/profile-image`      | Upload profile image       | Yes           | All           |
-| POST   | `/resume`             | Upload resume              | Yes           | Candidate     |
-| POST   | `/change-password`    | Change password            | Yes           | All           |
+MongoDB (local installation or MongoDB Atlas)
 
-### Job Routes (`/api/jobs`)
+Git
 
-| Method | Endpoint              | Description                | Auth Required | Role          |
-|--------|-----------------------|----------------------------|---------------|---------------|
-| GET    | `/`                   | Get all jobs (with filters)| No            | Public        |
-| GET    | `/:jobId`             | Get job by ID              | No            | Public        |
-| POST   | `/`                   | Create new job             | Yes           | Recruiter     |
-| PUT    | `/:jobId`             | Update job                 | Yes           | Recruiter     |
-| DELETE | `/:jobId`             | Delete job                 | Yes           | Recruiter     |
-| GET    | `/recruiter/my-jobs`  | Get recruiter's jobs       | Yes           | Recruiter     |
+1. Clone the repository
 
-### Application Routes (`/api/applications`)
+git clone <YOUR_REPOSITORY_URL>
+cd AI-Powered-Job-Recommendation-Application-Portal
 
-| Method | Endpoint              | Description                | Auth Required | Role          |
-|--------|-----------------------|----------------------------|---------------|---------------|
-| POST   | `/apply`              | Apply for job              | Yes           | Candidate     |
-| GET    | `/my-applications`    | Get user's applications    | Yes           | Candidate     |
-| GET    | `/job/:jobId`         | Get job applications       | Yes           | Recruiter     |
-| PUT    | `/:applicationId/status` | Update application status | Yes        | Recruiter     |
+2. Install backend dependencies
 
-### Recommendation Routes (`/api/recommendations`)
-
-| Method | Endpoint              | Description                | Auth Required | Role          |
-|--------|-----------------------|----------------------------|---------------|---------------|
-| GET    | `/`                   | Get AI job recommendations | Yes           | Candidate     |
-
-### Admin Routes (`/api/admin`)
-
-| Method | Endpoint              | Description                | Auth Required | Role          |
-|--------|-----------------------|----------------------------|---------------|---------------|
-| GET    | `/overview`           | Get dashboard analytics    | Yes           | Admin         |
-| GET    | `/users`              | Get all users              | Yes           | Admin         |
-| DELETE | `/users/:userId`      | Delete user                | Yes           | Admin         |
-| PUT    | `/users/:userId/role` | Change user role           | Yes           | Admin         |
-| GET    | `/pending-jobs`       | Get pending jobs           | Yes           | Admin         |
-| PUT    | `/jobs/:jobId/approve`| Approve job                | Yes           | Admin         |
-| PUT    | `/jobs/:jobId/reject` | Reject job                 | Yes           | Admin         |
-
-**Full API documentation available in `/docs/swagger.yaml` and Postman collection.**
-
----
-
-## Setup & Installation
-
-### Prerequisites
-- Node.js (v16 or higher)
-- MongoDB (local or Atlas)
-- Python 3.8+
-- Cloudinary account
-- SMTP email credentials (Gmail)
-
-### Backend Setup
-
-1. **Clone the repository**
-```bash
-git clone <repository-url>
-cd project-root/backend
-```
-
-2. **Install dependencies**
-```bash
+cd backend
 npm install
-```
 
-3. **Create `.env` file**
-```env
-PORT=5000
-MONGODB_URI=mongodb://localhost:27017/job-portal
-FRONTEND_URL=http://localhost:5173
+Create a backend/.env file and add the configuration values required
+by the backend. These may include your MongoDB connection string, JWT
+secrets, Cloudinary credentials, email service credentials, and the
+recommendation API address.
 
-ACCESS_TOKEN_SECRET=your_access_token_secret_here
-ACCESS_TOKEN_EXPIRY=20min
-REFRESH_TOKEN_SECRET=your_refresh_token_secret_here
-REFRESH_TOKEN_EXPIRY=7d
+3. Install frontend dependencies
 
-CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
-CLOUDINARY_API_KEY=your_cloudinary_api_key
-CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+Open another terminal from the project root:
 
-RESEND_API_KEY=
-ML_API_URL=http://localhost:8001/api
-
-NODE_ENV=development
-```
-
-4. **Seed the database** (Optional, for demo data)
-```bash
-node database/index.js
-```
-
-5. **Start the server**
-```bash
-npm run dev
-```
-
-Server runs on `http://localhost:5000`
-
----
-
-### Frontend Setup
-
-1. **Navigate to frontend**
-```bash
-cd ../frontend
-```
-
-2. **Install dependencies**
-```bash
+cd client
 npm install
-```
 
-3. **Create `.env` file**
-```env
-VITE_API_BASE_URL=http://localhost:5000/api/v1
-```
+Create a client/.env file for the frontend environment variables. For
+a local setup, the API base URL should point to your running backend.
+Check the frontend code for the exact variable name expected by the
+application.
 
-4. **Start development server**
-```bash
-npm run dev
-```
+4. Install Python service dependencies
 
-Frontend runs on `http://localhost:5173`
+cd ml_api
+python -m venv .venv
 
----
+Activate the virtual environment on Windows:
 
-### ML API Setup
+.venv\Scripts\Activate.ps1
 
-1. **Navigate to ml_api**
-```bash
-cd ../ml_api
-```
+Install the packages:
 
-2. **Create virtual environment**
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-3. **Install dependencies**
-```bash
 pip install -r requirements.txt
-```
 
-4. **Create `.env` file**
-```env
-FLASK_ENV=development
-MONGODB_URI=mongodb://localhost:27017/job-portal
-```
+Add any required environment configuration in a local .env file if the
+service expects it.
 
-5. **Start ML API**
-```bash
-python app.py
-```
+5. Start the services
 
-ML API runs on `http://localhost:5001`
+Run each service in its own terminal. Use the scripts defined in each
+package.json to start the backend and frontend. Start the Python
+recommendation service using the entry point and command configured in
+the project.
 
----
+If a command differs in your local setup, check the relevant
+package.json or Python entry-point file.
 
-## AI Model Workflow
+Environment variables and security
 
-### Overview
-The ML recommendation engine uses Natural Language Processing to match candidate skills with job requirements.
+This project needs local configuration files for secrets and service
+URLs.
 
-### Process Flow
-1. **Data Collection**: Candidate profile (skills, experience) and all active jobs
-2. **Text Processing**: 
-   - Extract skills from candidate profile
-   - Extract required skills from job descriptions
-   - Tokenize and clean text
-3. **Vectorization**: Convert text to numerical vectors using TF-IDF
-4. **Similarity Calculation**: Compute cosine similarity between candidate and jobs
-5. **Ranking**: Sort jobs by similarity score
-6. **Return**: Top 5 recommended jobs
+Do not upload .env files.
 
-### Technologies Used
-- **TF-IDF Vectorizer** - Convert text to feature vectors
-- **Cosine Similarity** - Measure similarity between vectors
-- **NLTK/spaCy** - Text preprocessing
-- **pandas** - Data manipulation
+Do not commit API keys, database passwords, JWT secrets, or private
+credentials.
 
-### API Integration
-```javascript
-// Backend calls ML API
-const response = await axios.post('http://localhost:5001/recommend', {
-  candidate: {
-    skills: ['React', 'Node.js', 'MongoDB'],
-    experience: 2
-  }
-});
-```
+Keep virtual environments such as .venv/ out of Git.
 
----
+Use .env.example files with placeholder values if you want to
+document the required settings.
 
-## Testing Strategy
+If a real secret has already been pushed to a public repository, revoke
+or rotate it.
 
-### Unit Tests
-- **Backend**: Jest + Supertest
-  - Model validation
-  - Utility functions
-  - Auth helpers (JWT, bcrypt)
-- **Frontend**: React Testing Library + Jest
-  - Component rendering
-  - User interactions
-  - Redux state changes
-- **ML API**: PyTest
-  - Model predictions
-  - API endpoints
+Recommendation approach
 
-### Integration Tests
-- Auth flow (register, login, refresh token)
-- Job CRUD operations
-- Application workflow
-- Admin operations
+The recommendation service is designed to compare candidate skills and
+job requirements:
 
-### End-to-End Tests
-- **Cypress/Playwright**
-  - User registration and login
-  - Job search and application
-  - Recruiter job posting
-  - Admin approval workflow
+Prepare the candidate and job text.
 
-### CI/CD Pipeline
-```yaml
-# .github/workflows/ci.yml
-name: CI/CD Pipeline
-on: [push, pull_request]
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Run backend tests
-        run: npm test
-      - name: Run frontend tests
-        run: npm test
-```
+Convert the text into TF-IDF vectors.
 
----
+Calculate cosine similarity.
 
-## Deployment Guide
+Rank jobs by similarity and return relevant results.
 
-### Backend Deployment (Render/Railway)
+Repository notes
 
-1. **Create account** on Render or Railway
-2. **Connect GitHub repository**
-3. **Set environment variables** (all from `.env`)
-4. **Deploy** from main branch
-5. **Verify** API endpoint is accessible
+This repository contains the application source code. To run it locally,
+configure the required database, API credentials, and service URLs
+first.
 
-### Frontend Deployment (Vercel/Netlify)
+Author
 
-1. **Create account** on Vercel or Netlify
-2. **Import project** from GitHub
-3. **Set build command**: `npm run build`
-4. **Set output directory**: `dist`
-5. **Add environment variable**: `VITE_API_BASE_URL=<backend-url>`
-6. **Deploy**
-
-### ML API Deployment (Render/AWS Lambda)
-
-1. **Dockerize Flask app** (optional)
-2. **Deploy to Render** or AWS Lambda
-3. **Update backend** with ML API URL
-4. **Test** recommendation endpoint
-
-### Database (MongoDB Atlas)
-
-1. **Create cluster** on MongoDB Atlas
-2. **Get connection string**
-3. **Update** `MONGODB_URI` in all services
-4. **Whitelist IP addresses** or allow all
-
----
-
-## Future Enhancements
-
-- **Advanced AI Models**: BERT, GPT for better recommendations
-- **In-app Messaging**: Chat between candidates and recruiters
-- **Video Interviews**: Integrated video call feature
-- **Analytics Dashboard**: Advanced charts and insights
-- **Mobile App**: React Native or Flutter app
-- **Internationalization**: Multi-language support
-- **Progressive Web App**: Offline capabilities
-- **Email Notifications**: Job alerts and updates
-- **Social Login**: OAuth with Google, LinkedIn
-- **API Rate Limiting**: Prevent abuse
-- **Caching**: Redis for improved performance
----
-
-## Acknowledgments
-
-- React and Redux Toolkit teams
-- MongoDB and Mongoose
-- Express.js community
-- Tailwind CSS
-- All open-source contributors
-
----
-
-**If you found this project helpful, please give it a star!**
-
----
-
-_This project was built as part of an Advanced Full Stack Development Internship Assignment._
+Atif Khan
