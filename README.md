@@ -1,224 +1,131 @@
-AI-Powered Job Recommendation & Application Portal ------------
+# Fullstack Task Manager (MERN)
 
-A full-stack job portal that helps candidates discover relevant job
-opportunities and manage applications. Recruiters can publish jobs and
-review applications, while administrators can manage users and job
-listings.
+## **Overview**
 
-The project combines a React frontend, a Node.js/Express backend,
-MongoDB, and a Python-based recommendation service.
+The Fullstack Task Manager is a web-based application built to help teams organize, assign, and manage their daily tasks in one place. It provides separate features for administrators and team members, making it easier to manage users, track task progress, and communicate about assigned work.
 
-Features ---------
+Built with the MERN stack, the application includes user authentication, role-based access, task management, priority settings, sub-tasks, and a dashboard to monitor ongoing activities.
 
-Candidate
+## **Problem Statement**
 
-Create an account and manage a profile.
+Managing team activities through spreadsheets, messages, or manual records can make it difficult to track responsibilities and deadlines. This application provides a centralized system where administrators can assign tasks, team members can update their progress, and everyone can access relevant task information.
 
-Search and browse job listings.
+## **Background**
 
-Upload a resume.
+As teams increasingly work on multiple projects simultaneously, keeping track of individual responsibilities becomes important. This project uses modern web technologies to provide a responsive platform for task organization and team coordination. It combines React, Redux Toolkit, Node.js, Express.js, and MongoDB to manage both frontend interactions and backend operations.
 
-Receive job recommendations based on profile skills and job
-requirements.
+## **Admin Features**
 
-Apply for jobs and track application status.
+1. **User Management**
 
-Recruiter ----------
+   * Create and manage administrator accounts.
+   * Add and manage team members.
 
-Create and manage job listings.
+2. **Task Assignment**
 
-View applications submitted for posted jobs.
+   * Assign tasks to individual users or multiple team members.
+   * Edit task details and update task status.
 
-Update application statuses.
+3. **Task Management**
 
-Administrator ----------
+   * Organize tasks into To Do, In Progress, and Completed.
+   * Set priority levels: High, Medium, Normal, and Low.
+   * Create and manage sub-tasks.
 
-View platform information and analytics.
+4. **Asset Management**
 
-Manage users ----------
+   * Upload task-related files and images.
 
-Review job listings.
+5. **Account Control**
 
-Authentication and files
+   * Activate or deactivate user accounts.
+   * Delete or move tasks to trash.
 
-JWT-based authentication.
+## **User Features**
 
-Password hashing ----------
+1. **Task Management**
 
-Password reset support.
+   * View assigned tasks and their details.
+   * Update task status to In Progress or Completed.
 
-File uploads using Cloudinary.
+2. **Communication**
 
-Technology -------------
+   * Add comments to task activities.
+   * Communicate through task-related discussions.
 
-Area                                Technologies
+## **General Features**
 
-Frontend                            React, Vite, Redux Toolkit, React
-Router, Axios, Tailwind CSS
+1. **Authentication and Authorization**
 
-Backend                             Node.js, Express.js, Mongoose
+   * Secure user login.
+   * Role-based access for administrators and regular users.
 
-Database                            MongoDB
+2. **Profile Management**
 
-Recommendation service              Python, scikit-learn
+   * View and update personal profile information.
 
-File storage                        Cloudinary
+3. **Password Management**
 
-Authentication                      JWT, bcrypt
+   * Change account passwords.
 
-How the application works ----------
+4. **Dashboard**
 
-A candidate creates a profile and adds their skills and experience.
+   * View task summaries and activity information.
+   * Filter tasks by their current status.
 
-Recruiters publish job listings with role details and required
-skills.
+## **Technologies Used**
 
-The recommendation service compares candidate information with job
-requirements.
+**Frontend**
 
-Relevant jobs are returned to the candidate.
+* React.js (Vite)
+* Redux Toolkit
+* Headless UI
+* Tailwind CSS
 
-Candidates can apply and follow the status of their applications.
+**Backend**
 
-The recommendation workflow uses text processing, TF-IDF vectorization,
-and cosine similarity, as described in the project design.
+* Node.js
+* Express.js
 
-Project structure -----------
+**Database**
 
-AI-Powered-Job-Recommendation-Application-Portal/
-├── backend/
-│   ├── src/
-│   │   ├── config/
-│   │   ├── controllers/
-│   │   ├── middlewares/
-│   │   ├── models/
-│   │   ├── routes/
-│   │   ├── services/
-│   │   ├── utils/
-│   │   └── validators/
-│   ├── package.json
-│   └── vercel.json
-├── client/
-│   ├── src/
-│   │   ├── api/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   └── store/
-│   ├── package.json
-│   └── vite.config.js
-├── database/
-│   ├── seed/
-│   └── index.js
-├── ml_api/
-│   ├── routes/
-│   ├── utils/
-│   ├── main.py
-│   └── requirements.txt
-└── README.md
+* MongoDB
 
-Getting started ----------
+## **Setup Instructions**
 
-Requirements
+### **1. Server Setup**
 
-Install the following before running the project:
+**Environment Variables**
 
-Node.js and npm
+Create a `.env` file inside the `server` directory and add the following variables:
 
-Python
+```env
+MONGODB_URI=your_mongodb_url
+JWT_SECRET=your_secret_key
+PORT=8800
+NODE_ENV=development
+```
 
-MongoDB (local installation or MongoDB Atlas)
+**MongoDB Configuration**
 
-Git ----------
+1. Visit [MongoDB Atlas](https://www.mongodb.com/cloud/atlas).
+2. Create an account or log in.
+3. Create a new cluster.
+4. Select a cloud provider and region.
+5. Create a database user.
+6. Configure network access.
+7. Copy your MongoDB connection string.
+8. Add the connection string to your server `.env` file.
 
-1. Clone the repository
+**Run the Server**
 
-git clone <YOUR_REPOSITORY_URL>
-cd AI-Powered-Job-Recommendation-Application-Portal
+Open the terminal and execute:
 
-2. Install backend dependencies
-
-cd backend
+```bash
+cd server
 npm install
-
-Create a backend/.env file and add the configuration values required
-by the backend. These may include your MongoDB connection string, JWT
-secrets, Cloudinary credentials, email service credentials, and the
-recommendation API address.
-
-3. Install frontend dependencies
-
-Open another terminal from the project root:
-
-cd client
-npm install
-
-Create a client/.env file for the frontend environment variables. For
-a local setup, the API base URL should point to your running backend.
-Check the frontend code for the exact variable name expected by the
-application.
-
-4. Install Python service dependencies
-
-cd ml_api
-python -m venv .venv
-
-Activate the virtual environment on Windows:
-
-.venv\Scripts\Activate.ps1
-
-Install the packages:
-
-pip install -r requirements.txt
-
-Add any required environment configuration in a local .env file if the
-service expects it.
-
-5. Start the services
-
-Run each service in its own terminal. Use the scripts defined in each
-package.json to start the backend and frontend. Start the Python
-recommendation service using the entry point and command configured in
-the project.
-
-If a command differs in your local setup, check the relevant
-package.json or Python entry-point file.
-
-Environment variables and security
-
-This project needs local configuration files for secrets and service
-URLs.
-
-Do not upload .env files.
-
-Do not commit API keys, database passwords, JWT secrets, or private
-credentials.
-
-Keep virtual environments such as .venv/ out of Git.
-
-Use .env.example files with placeholder values if you want to
-document the required settings.
-
-If a real secret has already been pushed to a public repository, revoke
-or rotate it.
-
-Recommendation approach
-
-The recommendation service is designed to compare candidate skills and
-job requirements:
-
-Prepare the candidate and job text.
-
-Convert the text into TF-IDF vectors.
-
-Calculate cosine similarity.
-
-Rank jobs by similarity and return relevant results.
-
-Repository notes
-
-This repository contains the application source code. To run it locally,
-configure the required database, API credentials, and service URLs
-first.
+npm start
+```
 
 ## Website Preview
 
@@ -232,10 +139,35 @@ first.
 ![Login](screenshots/login.png)
 
 
+The server should start successfully and connect to the MongoDB database.
 
+### **2. Client Setup**
 
-Author
+**Environment Variables**
 
-Atif Khan
+Create a `.env` file inside the `client` directory:
 
+```env
+VITE_APP_BASE_URL=http://localhost:8800
+VITE_APP_FIREBASE_API_KEY=your_firebase_api_key
+```
 
+**Run the Client**
+
+Open another terminal and execute:
+
+```bash
+cd client
+npm install
+npm start
+```
+
+Open your browser and visit:
+
+```text
+http://localhost:3000
+```
+
+## **Project Summary**
+
+This project provides a centralized platform for managing team tasks, user accounts, and daily activities. It allows administrators to organize work and monitor progress while giving team members access to their assigned tasks and related discussions. The application demonstrates the use of full-stack web development technologies to build a practical task management system.
