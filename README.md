@@ -1,4 +1,4 @@
-AI-Powered Job Recommendation & Application Portal
+AI-Powered Job Recommendation & Application Portal ------------
 
 A full-stack job portal that helps candidates discover relevant job
 opportunities and manage applications. Recruiters can publish jobs and
@@ -8,7 +8,7 @@ listings.
 The project combines a React frontend, a Node.js/Express backend,
 MongoDB, and a Python-based recommendation service.
 
-Features
+Features ---------
 
 Candidate
 
@@ -23,7 +23,7 @@ requirements.
 
 Apply for jobs and track application status.
 
-Recruiter
+Recruiter ----------
 
 Create and manage job listings.
 
@@ -31,11 +31,11 @@ View applications submitted for posted jobs.
 
 Update application statuses.
 
-Administrator
+Administrator ----------
 
 View platform information and analytics.
 
-Manage users.
+Manage users ----------
 
 Review job listings.
 
@@ -43,13 +43,13 @@ Authentication and files
 
 JWT-based authentication.
 
-Password hashing.
+Password hashing ----------
 
 Password reset support.
 
 File uploads using Cloudinary.
 
-Technology
+Technology -------------
 
 Area                                Technologies
 
@@ -66,7 +66,7 @@ File storage                        Cloudinary
 
 Authentication                      JWT, bcrypt
 
-How the application works
+How the application works ----------
 
 A candidate creates a profile and adds their skills and experience.
 
@@ -83,7 +83,7 @@ Candidates can apply and follow the status of their applications.
 The recommendation workflow uses text processing, TF-IDF vectorization,
 and cosine similarity, as described in the project design.
 
-Project structure
+Project structure -----------
 
 AI-Powered-Job-Recommendation-Application-Portal/
 ├── backend/
@@ -116,7 +116,7 @@ AI-Powered-Job-Recommendation-Application-Portal/
 │   └── requirements.txt
 └── README.md
 
-Getting started
+Getting started ----------
 
 Requirements
 
@@ -128,7 +128,7 @@ Python
 
 MongoDB (local installation or MongoDB Atlas)
 
-Git
+Git ----------
 
 1. Clone the repository
 
@@ -220,6 +220,22 @@ This repository contains the application source code. To run it locally,
 configure the required database, API credentials, and service URLs
 first.
 
+## Website Preview
+
+### Homepage
+![Homepage](screenshots/homepage.png)
+
+### Dashboard
+![Dashboard](screenshots/dashboard.png)
+
+### Login Page
+![Login](screenshots/login.png)
+
+
+
+
 Author
 
 Atif Khan
+
+
