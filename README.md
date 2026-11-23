@@ -1,5 +1,3 @@
-
-
 # Fullstack Task Manager (MERN)
 
 ## **Overview**
